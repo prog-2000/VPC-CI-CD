@@ -26,15 +26,17 @@ resource "aws_subnet" "public" {
     }
 }
 
-resource "aws_subnet" "private" {
+resource "aws_subnet" "my_private_subnet" {
   count             = length(var.private_subnets)
-  vpc_id            = aws_vpc.this.id
+  vpc_id            = aws_vpc.my_vpc.id
   cidr_block        = var.private_subnets[count.index]
-  availability_zone = data.aws_availability_zones.available.names[count.index]
-    tags = {
-        Name = "privateSubnet${count.index + 1}"
-    }
+  availability_zone = var.azs[count.index]
+
+  tags = {
+    Name = "private-subnet-${count.index}"
+  }
 }
+
 
 resource "aws_eip" "nat" {
   domain = "vpc"
